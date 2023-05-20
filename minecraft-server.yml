@@ -1,0 +1,19 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install docker
+      ansible.builtin.apt:
+        name: docker.io
+        update_cache: yes
+
+    - name: Pull und run Minecraft Server
+      community.docker.docker_container:
+        name: mcserver
+        image: itzg/minecraft-server
+        restart_policy: always
+        ports:
+          - "25565:25565"
+        env:
+          EULA: "TRUE"
+          VERSION: "1.18.2"
