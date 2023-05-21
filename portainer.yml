@@ -1,0 +1,33 @@
+---
+- name: Aktualisiere Portainer
+  hosts: Hetzner
+  become: true
+  gather_facts: false
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+  tasks:
+    - name: Stoppe und entferne Portainer Container
+      docker_compose:
+        project_src: /root/portainer
+        command: down
+      register: compose_result
+      changed_when: "'Removed' in compose_result.stdout"
+
+    - name: Entferne altes Portainer Image
+      shell: docker rmi -f portainer/portainer-ce:latest
+      register: image_result
+      changed_when: "'Untagged' in image_result.stdout"
+
+    - name: Lade Portainer Image herunter
+      docker_image:
+        name: portainer/portainer-ce:latest
+        source: pull
+      register: pull_result
+      changed_when: pull_result.status == 'changed'
+
+    - name: Starte Portainer Container
+      docker_compose:
+        project_src: /root/portainer
+        command: up -d
+      register: compose_result
+      changed_when: "'Started' in compose_result.stdout"
