@@ -18,6 +18,6 @@
 
     - name: Starten von Portainer
       become_user: root
-      shell: docker-compose up
+      shell: docker-compose up -d
       args:
         chdir: /root/portainer
