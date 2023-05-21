@@ -12,7 +12,7 @@
 
     - name: Aktualisieren des Portainer-Images
       become_user: root
-      shell: docker-compose pull portainer/portainer-ce:latest
+      shell: docker pull portainer/portainer-ce:latest
       args:
         chdir: /root/portainer
 
