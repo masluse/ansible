@@ -6,6 +6,11 @@
   vars:
     ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
   tasks:
+    tasks:
+    - name: Löschen des Images
+      become_user: root
+      shell: docker rmi -f portainer/agent:2.18.1
+      
     - name: Löschen des Images
       become_user: root
       shell: docker rmi -f portainer/agent:latest
