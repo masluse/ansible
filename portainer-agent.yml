@@ -1,6 +1,6 @@
 ---
 - name: Aktualisiere Portainer
-  hosts: VPN,Test-System
+  hosts: VPN,Test-System,Synology
   become: true
   gather_facts: false
   vars:
