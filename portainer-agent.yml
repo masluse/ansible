@@ -1,0 +1,15 @@
+---
+- name: Aktualisiere Portainer
+  hosts: VPN
+  become: true
+  gather_facts: false
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+  tasks:
+    - name: Löschen des Images
+      become_user: root
+      shell: docker rmi -f portainer/agent:latest
+
+    - name: Herunterladen des Images
+      become_user: root
+      shell: docker run -d -p 9001:9001 --name portainer_agent --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes portainer/agent:latest
