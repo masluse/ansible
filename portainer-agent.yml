@@ -6,7 +6,6 @@
   vars:
     ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
   tasks:
-    tasks:
     - name: Löschen des Images
       become_user: root
       shell: docker stop portainer_agent
