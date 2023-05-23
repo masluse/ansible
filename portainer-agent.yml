@@ -9,7 +9,11 @@
     tasks:
     - name: Löschen des Images
       become_user: root
-      shell: docker rmi -f portainer/agent:2.18.1
+      shell: docker stop portainer_agent
+      
+    - name: Löschen des Images
+      become_user: root
+      shell: docker rm portainer_agent
       
     - name: Löschen des Images
       become_user: root
