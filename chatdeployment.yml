@@ -5,51 +5,6 @@
   gather_facts: false
   vars:
     ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
-
-  tasks:
-    - name: Clone the repository
-      git:
-        repo: https://github.com/masluse/ChatWebServer
-        dest: /root/test
-        version: main
-      become: yes
-
-    - name: Build the Docker image
-      docker_image:
-        path: /root/test/ChatWebServer/
-        name: "ghcr.io/masluse/chatweb:latest"
-      become: yes
-
-    - name: Push Docker image
-      docker_login:
-        registry_url: ghcr.io
-        username: masluse
-        password: "{{ secrets.DOCKER_TOKEN }}"
-      docker_image_push:
-        name: "ghcr.io/masluse/chatweb:latest"
-      become: yes
-
-    - name: Remove the cloned folder
-      file:
-        path: /root/test
-        state: absent
-      become: yes
-
-    - name: Deploy Portainer Stack
-      become: yes
-      shell: |
-        cd /docker/docker-compose/prod-deployment/
-        docker-compose pull
-        docker-compose up --force-recreate --build -d
-
-
----
-- name: Deploy Portainer Stack
-  hosts: Chat
-  become: true
-  gather_facts: false
-  vars:
-    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
   environment: 
     DOCKER_TOKEN: "{{ lookup('env', 'DOCKER_TOKEN') }}"
 
