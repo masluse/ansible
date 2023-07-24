@@ -20,9 +20,6 @@
       docker_image:
         path: /root/test/ChatWebServer/
         name: "ghcr.io/masluse/chatweb:latest"
-        buildargs:
-          # If you have any build arguments, you can specify them here
-          # For example: ARG_NAME: value
       become: yes
 
     - name: Docker login
@@ -33,8 +30,8 @@
       become: yes
 
     - name: Push Docker image
-      docker_image_push:
-        name: "ghcr.io/masluse/chatweb:latest"
+      command: >
+        docker push {{ DOCKER_REPOSITORY }}:latest
       become: yes
 
     - name: Remove the cloned folder
