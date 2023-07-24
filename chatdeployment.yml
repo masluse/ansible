@@ -34,7 +34,7 @@
     - name: Remove the cloned folder
       become: yes
       become_user: root
-      shell: rm -rf /root/test
+      shell: rm -rf /root/ChatWebServer
 
     - name: Deploy Portainer Stack
       become: yes
