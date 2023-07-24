@@ -24,7 +24,7 @@
       docker_login:
         registry_url: ghcr.io
         username: masluse
-        password: "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"
+        password: "{{ secrets.DOCKER_TOKEN }}"
       docker_image_push:
         name: "ghcr.io/masluse/chatweb:latest"
       become: yes
