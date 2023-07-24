@@ -17,7 +17,7 @@
     - name: Build the Docker image
       become: yes
       become_user: root
-      shell: cd /root/ChatWebServer && docker build -t ghcr.io/masluse/chatweb:latest .
+      shell: cd /root/ChatWebServer/ChatWebServer && docker build -t ghcr.io/masluse/chatweb:latest .
 
     - name: Docker login
       docker_login:
