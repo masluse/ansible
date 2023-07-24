@@ -17,10 +17,11 @@
       become: yes
 
     - name: Build the Docker image
-      docker_image:
-        path: /root/test/ChatWebServer/
-        name: "ghcr.io/masluse/chatweb:latest"
+      command: >
+        cd /root/test
+        docker build -t ghcr.io/masluse/chatweb:latest .
       become: yes
+      
 
     - name: Docker login
       docker_login:
@@ -31,7 +32,7 @@
 
     - name: Push Docker image
       command: >
-        docker push {{ DOCKER_REPOSITORY }}:latest
+        docker push ghcr.io/masluse/chatweb:latest
       become: yes
 
     - name: Remove the cloned folder
