@@ -10,17 +10,14 @@
 
   tasks:
     - name: Clone the repository
-      command: >
-        cd /root
-        git clone https://github.com/masluse/ChatWebServer
       become: yes
+      become_user: root
+      shell: cd /root && git clone https://github.com/masluse/ChatWebServer
 
     - name: Build the Docker image
-      command: >
-        cd /root/ChatWebServer
-        docker build -t ghcr.io/masluse/chatweb:latest .
       become: yes
-      
+      become_user: root
+      shell: cd /root/ChatWebServer && docker build -t ghcr.io/masluse/chatweb:latest .
 
     - name: Docker login
       docker_login:
@@ -30,15 +27,14 @@
       become: yes
 
     - name: Push Docker image
-      command: >
-        docker push ghcr.io/masluse/chatweb:latest
       become: yes
+      become_user: root
+      shell: docker push ghcr.io/masluse/chatweb:latest
 
     - name: Remove the cloned folder
-      command: >
-        cd /root
-        rm -rf test
       become: yes
+      become_user: root
+      shell: rm -rf /root/test
 
     - name: Deploy Portainer Stack
       become: yes
