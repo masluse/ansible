@@ -39,6 +39,6 @@
     - name: Deploy Portainer Stack
       become: yes
       shell: |
-        cd /docker/docker-compose/test-deployment/
+        cd /docker/docker-compose/prod-deployment/
         docker-compose pull
         docker-compose up --force-recreate --build -d
