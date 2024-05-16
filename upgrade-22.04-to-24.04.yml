@@ -43,7 +43,7 @@
         line: 'Prompt=normal'
 
     - name: Start the release upgrade to 23.10
-      command: do-release-upgrade -d
+      command: do-release-upgrade -q
       register: upgrade_to_2310_result
       ignore_errors: yes
 
@@ -58,7 +58,7 @@
         line: 'Prompt=lts'
 
     - name: Start the release upgrade to 24.04 LTS
-      command: do-release-upgrade -d
+      command: do-release-upgrade -q
       register: upgrade_to_2404_result
       ignore_errors: yes
 
