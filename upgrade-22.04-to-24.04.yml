@@ -1,8 +1,16 @@
----
 - name: Upgrade Ubuntu 22.04 LTS to 24.04 LTS via 23.10
   hosts: all
   become: yes
   tasks:
+    - name: Gather current Ubuntu version
+      command: lsb_release -rs
+      register: current_version
+
+    - name: Ensure system is running Ubuntu 22.04 LTS
+      fail:
+        msg: "This playbook is only for upgrading from Ubuntu 22.04 LTS."
+      when: current_version.stdout != "22.04"
+
     - name: Update apt package index
       apt:
         update_cache: yes
@@ -43,13 +51,23 @@
         line: 'Prompt=normal'
 
     - name: Start the release upgrade to 23.10
-      command: do-release-upgrade -q
+      command: do-release-upgrade -f DistUpgradeViewNonInteractive
       register: upgrade_to_2310_result
       ignore_errors: yes
 
     - name: Reboot after upgrading to 23.10
       reboot:
       when: upgrade_to_2310_result is succeeded
+
+    - name: Gather current Ubuntu version after upgrade to 23.10
+      command: lsb_release -rs
+      register: current_version_2310
+      changed_when: false
+
+    - name: Ensure system is running Ubuntu 23.10
+      fail:
+        msg: "Upgrade to 23.10 failed."
+      when: current_version_2310.stdout != "23.10"
 
     - name: Set Prompt back to lts after reboot
       lineinfile:
@@ -58,10 +76,20 @@
         line: 'Prompt=lts'
 
     - name: Start the release upgrade to 24.04 LTS
-      command: do-release-upgrade -q
+      command: do-release-upgrade -f DistUpgradeViewNonInteractive
       register: upgrade_to_2404_result
       ignore_errors: yes
 
     - name: Reboot after upgrading to 24.04 LTS
       reboot:
       when: upgrade_to_2404_result is succeeded
+
+    - name: Gather current Ubuntu version after upgrade to 24.04 LTS
+      command: lsb_release -rs
+      register: current_version_2404
+      changed_when: false
+
+    - name: Ensure system is running Ubuntu 24.04 LTS
+      fail:
+        msg: "Upgrade to 24.04 LTS failed."
+      when: current_version_2404.stdout != "24.04"
