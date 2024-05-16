@@ -1,0 +1,59 @@
+---
+- name: Upgrade Ubuntu 22.04 LTS to 24.04 LTS
+  hosts: all
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+  become: true
+  tasks:
+    - name: Update apt package index
+      apt:
+        update_cache: yes
+
+    - name: List upgradable packages
+      command: apt list --upgradable
+      register: upgradable_packages
+      ignore_errors: yes
+
+    - name: Upgrade all installed packages
+      apt:
+        upgrade: dist
+
+    - name: Check if newer kernel is available
+      shell: |
+        if [ $(uname -r) != $(apt list --upgradable | grep linux-image | cut -d' ' -f3) ]; then
+          echo "Newer kernel available"
+          exit 0
+        else
+          exit 1
+        fi
+      register: kernel_upgrade_needed
+      failed_when: kernel_upgrade_needed.rc not in [0, 1]
+
+    - name: Reboot if newer kernel is available
+      reboot:
+      when: kernel_upgrade_needed.rc == 0
+
+    - name: Install ubuntu-release-upgrader-core
+      apt:
+        name: ubuntu-release-upgrader-core
+        state: present
+
+    - name: Ensure the Prompt line is set to 'lts'
+      lineinfile:
+        path: /etc/update-manager/release-upgrades
+        regexp: '^Prompt='
+        line: 'Prompt=lts'
+
+    - name: Check if LTS prompt is set
+      command: grep 'lts' /etc/update-manager/release-upgrades
+      register: lts_prompt_set
+      failed_when: lts_prompt_set.rc != 0
+
+    - name: Start the release upgrade to 24.04 LTS
+      command: do-release-upgrade -d
+      register: upgrade_result
+      ignore_errors: yes
+
+    - name: Reboot after upgrade
+      reboot:
+      when: upgrade_result is succeeded
