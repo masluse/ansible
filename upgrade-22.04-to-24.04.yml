@@ -39,7 +39,7 @@
     - name: Set Prompt to normal
       lineinfile:
         path: /etc/update-manager/release-upgrades
-        regexp: '^Prompt='
+        regexp: 'Prompt=lts'
         line: 'Prompt=normal'
 
     - name: Start the release upgrade to 23.10
@@ -54,7 +54,7 @@
     - name: Set Prompt back to lts after reboot
       lineinfile:
         path: /etc/update-manager/release-upgrades
-        regexp: '^Prompt='
+        regexp: 'Prompt=normal'
         line: 'Prompt=lts'
 
     - name: Start the release upgrade to 24.04 LTS
