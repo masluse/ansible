@@ -6,59 +6,6 @@
       command: lsb_release -rs
       register: current_version
 
-    - name: Ensure system is running Ubuntu 22.04 LTS
-      fail:
-        msg: "This playbook is only for upgrading from Ubuntu 22.04 LTS."
-      when: current_version.stdout != "22.04"
-
-    - name: Update apt package index
-      apt:
-        update_cache: yes
-
-    - name: List upgradable packages
-      command: apt list --upgradable
-      register: upgradable_packages
-      ignore_errors: yes
-
-    - name: Upgrade all installed packages
-      apt:
-        upgrade: dist
-
-    - name: Check if newer kernel is available
-      shell: |
-        if [ $(uname -r) != $(apt list --upgradable | grep linux-image | cut -d' ' -f3) ]; then
-          echo "Newer kernel available"
-          exit 0
-        else
-          exit 1
-        fi
-      register: kernel_upgrade_needed
-      failed_when: kernel_upgrade_needed.rc not in [0, 1]
-
-    - name: Reboot if newer kernel is available
-      reboot:
-      when: kernel_upgrade_needed.rc == 0
-
-    - name: Install ubuntu-release-upgrader-core
-      apt:
-        name: ubuntu-release-upgrader-core
-        state: present
-
-    - name: Set Prompt to normal
-      lineinfile:
-        path: /etc/update-manager/release-upgrades
-        regexp: 'Prompt=lts'
-        line: 'Prompt=normal'
-
-    - name: Start the release upgrade to 23.10
-      command: do-release-upgrade -f DistUpgradeViewNonInteractive
-      register: upgrade_to_2310_result
-      ignore_errors: yes
-
-    - name: Reboot after upgrading to 23.10
-      reboot:
-      when: upgrade_to_2310_result is succeeded
-
     - name: Gather current Ubuntu version after upgrade to 23.10
       command: lsb_release -rs
       register: current_version_2310
