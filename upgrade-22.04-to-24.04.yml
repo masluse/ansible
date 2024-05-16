@@ -76,7 +76,7 @@
         line: 'Prompt=lts'
 
     - name: Start the release upgrade to 24.04 LTS
-      command: do-release-upgrade -f DistUpgradeViewNonInteractive
+      command: do-release-upgrade -d -f DistUpgradeViewNonInteractive
       register: upgrade_to_2404_result
       ignore_errors: yes
 
