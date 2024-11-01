@@ -25,14 +25,32 @@
         dest: "/tmp/teleport-{{ latest_version }}.tar.gz"
       when: current_version.rc != 0 or current_version.stdout != latest_version
 
-    - name: Extract Teleport
+    - name: Extract Teleport to a temporary directory
       unarchive:
         src: "/tmp/teleport-{{ latest_version }}.tar.gz"
-        dest: /usr/local/bin
+        dest: "/tmp/teleport-{{ latest_version }}"
         remote_src: yes
+
+    - name: Install new Teleport binaries
+      copy:
+        src: "/tmp/teleport-{{ latest_version }}/teleport"
+        dest: "/usr/local/bin/teleport"
+        mode: '0755'
+      when: current_version.rc != 0 or current_version.stdout != latest_version
+
+    - name: Install new tsh binary
+      copy:
+        src: "/tmp/teleport-{{ latest_version }}/tsh"
+        dest: "/usr/local/bin/tsh"
+        mode: '0755'
       when: current_version.rc != 0 or current_version.stdout != latest_version
 
     - name: Clean up tar file
       file:
         path: "/tmp/teleport-{{ latest_version }}.tar.gz"
+        state: absent
+
+    - name: Clean up extracted files
+      file:
+        path: "/tmp/teleport-{{ latest_version }}"
         state: absent
