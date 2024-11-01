@@ -25,6 +25,11 @@
         dest: "/tmp/teleport-{{ latest_version }}.tar.gz"
       when: current_version.rc != 0 or current_version.stdout != latest_version
 
+    - name: Create temporary directory for extraction
+      file:
+        path: "/tmp/teleport-{{ latest_version }}"
+        state: directory
+
     - name: Extract Teleport to a temporary directory
       unarchive:
         src: "/tmp/teleport-{{ latest_version }}.tar.gz"
