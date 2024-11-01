@@ -55,3 +55,8 @@
       file:
         path: "/tmp/teleport-{{ latest_version }}"
         state: absent
+    - name: Restart Teleport service
+      service:
+        name: teleport
+        state: restarted
+      when: current_version.rc != 0 or current_version.stdout != latest_version
