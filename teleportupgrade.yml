@@ -37,12 +37,12 @@
         remote_src: yes
 
     - name: Install new Teleport binaries
-      command: mv /tmp/teleport-{{ latest_version }}/teleport /usr/local/bin/teleport
+      command: mv /tmp/teleport-{{ latest_version }}/teleport/teleport /usr/local/bin/teleport
       args:
         removes: /usr/local/bin/teleport
-
+    
     - name: Install new tsh binary
-      command: mv /tmp/teleport-{{ latest_version }}/tsh /usr/local/bin/tsh
+      command: mv /tmp/teleport-{{ latest_version }}/teleport/tsh /usr/local/bin/tsh
       args:
         removes: /usr/local/bin/tsh
 
